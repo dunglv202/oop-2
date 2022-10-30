@@ -1,36 +1,46 @@
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Email {
   public static void main(String[] args) throws Exception {
     Scanner scanner = new Scanner(new File("DANHSACH.in"));
 
-    Map<String, Integer> l = new HashMap<>();
+    Set<String> dsTen = new HashSet<>();
+    Map<String, Integer> emails = new HashMap<>();
+
     while (scanner.hasNextLine()) {
-      String s = chuanHoa(scanner.nextLine());
+      String ten = chuanHoaTen(scanner.nextLine());
+//      System.out.println(ten + " => " + dsTen.contains(ten));
 
-      Integer c = l.getOrDefault(s, 0);
-      l.put(s, ++c);
+      if (!dsTen.contains(ten)) {
+        dsTen.add(ten);
 
-      if (c == 1) {
-        System.out.println(s + "@ptit.edu.vn");
-      } else {
-        System.out.println(s + c + "@ptit.edu.vn");
+        String prefix = rutGonTen(ten);
+        Integer suffix = emails.getOrDefault(prefix, 0);
+
+        emails.put(prefix, ++suffix);
+
+        if (suffix == 1) {
+          System.out.println(prefix + "@ptit.edu.vn");
+        } else {
+          System.out.println(prefix + suffix + "@ptit.edu.vn");
+        }
       }
     }
   }
 
-  private static String chuanHoa(String s) {
-    StringTokenizer tokenizer = new StringTokenizer(s.toLowerCase());
+  private static String chuanHoaTen(String s) {
+    return Arrays.stream(s.trim().toLowerCase().split("\\s+")).collect(Collectors.joining(" "));
+  }
+
+  private static String rutGonTen(String s) {
+    String[] p = s.split(" ");
 
     String result = "";
-    while (tokenizer.hasMoreTokens()) {
-      String next = tokenizer.nextToken();
-      if (tokenizer.hasMoreTokens()) {
-        result += next.charAt(0);
-      } else {
-        result = next + result;
-      }
+    result += p[p.length-1];
+    for (int i=0; i<p.length-1; i++) {
+      result += p[i].charAt(0);
     }
 
     return result;
